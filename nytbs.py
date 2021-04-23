@@ -7,17 +7,19 @@ from bs4 import BeautifulSoup
 import tkinter as tk
 
 class GUI:
-
     def __init__(self, title):
-
+        
+        # Tkinter Window Initialization
         self.root = tk.Tk()
         self.root.geometry("300x180")
         self.frame = tk.Frame(self.root)
         self.root.title(title)
 
-        self.size = tk.StringVar()
-        self.genre = tk.StringVar()
+        # Value Options
+        self.size = tk.StringVar(value="Letter")
+        self.genre = tk.StringVar(value="Fiction")
 
+        # Radio Buttons
         tk.Label(self.root, text="Document Size").grid(row=0, column=0, padx=30, pady=15)
         tk.Label(self.root, text="Genre").grid(row=0, column=1,padx=30, pady=15)
 
@@ -39,15 +41,40 @@ class GUI:
     def start_button_cmd(self):
        start(str(self.genre.get()), str(self.size.get()))
 
-def start(genre, size):
-    head = "The New York Times Bestsellers - " + genre.title()
-    date_str = str(date.today().strftime("%m-%d-%y"))
-    url = "https://nytimes.com/books/best-sellers/hardcover-" + genre
-
-    filename = head + " " + date_str + " " + size + ".pdf"
-
+def request_book_data(url):
     response = requests.get(url).text
     soup = BeautifulSoup(response, 'html.parser')
+
+    book_list = soup.find_all('li', {"class":"css-13y32ub"})
+    return book_list
+
+def parse_book_data(book_list, url):
+    best_sellers = []
+
+    for book in book_list:
+        title = book.select('h3')[0].text.lower().title()
+        author= book.select('p')[1].text
+        
+        # Index 2 returns how many weeks a book has been on the
+        # best seller list, index 3 returns summary of the book; type <p>
+        image_link = book.select('img')
+        image_src = ""
+
+        for pic in image_link:
+            image_src = pic.get('src')
+            url = req.urlretrieve(image_src, title+'.jpg')
+
+        book_info = {
+            "title": title,
+            "author": author[3:], # skip 'by '
+            "image" : image_src
+        }
+
+        best_sellers.append(book_info)
+        
+    return best_sellers
+
+def write_PDF(best_sellers, head, size, filename):
 
     class PDF(fpdf.FPDF):
         def header(self):
@@ -56,42 +83,18 @@ def start(genre, size):
             self.cell(30, 10,head, 0, 0, 'C')
             self.ln(20)
 
-    book_list = soup.find_all('li', {"class":"css-13y32ub"})
-    best_sellers = []
-
-    # Find all the relevant information on the webpage
-    for book in book_list:
-        title = book.select('h3')[0].text.lower()
-        title = title.title()
-        author = book.select('p')[1].text
-        # Index 2 returns how many weeks a book has been on the
-        # best seller list, index 3 returns summary of the book; type <p>
-        image_link = book.select('img')
-        image_src = ""
-        
-        # We have to download each image, as the address provided by NYT isn't direct file path
-        for pic in image_link:
-            image_src = pic.get('src')
-            url = req.urlretrieve(image_src, title+'.jpg')
-        
-        book_info = {
-            "title": title,
-            "author": author[3:], # skip 'by '
-            "image" : image_src
-        }
-
-        best_sellers.append(book_info)
-
-    # Begin with PDF creation after all the information has been stored in the dictonary
     pdf = PDF(format=size)
     pdf.add_page()
 
-    # Print out relevant info for each book
     for book in best_sellers:
         pdf.set_font("Arial", 'B', size=20)
-        pdf.cell(100,10, book["title"], 0, 1)
+        pdf.cell(100, 10, book["title"], 0, 1)
         pdf.set_font("Arial", size=15)
-        pdf.cell(140,10, "Author: " + book["author"], 0)
+        pdf.cell(140, 10, "Author: " + book["author"], 0)
+
+        # We shrink the contents of the PDF file depending on the desired paper size.
+        # this allows for entries to not be split when there is more than one page.
+
         if size == "letter":
             pdf.image(name=str(book["title"] + ".jpg"), x=150, w=25,h=35)
         else:
@@ -99,6 +102,18 @@ def start(genre, size):
         pdf.ln()
 
     pdf.output(filename, 'F')
+
+def start(genre, size):
+    head = "The New York Times Bestsellers - " + genre.title()
+    date_str = str(date.today().strftime("%m-%d-%y"))
+    url = "https://nytimes.com/books/best-sellers/hardcover-" + genre
+
+    filename = head + " " + date_str + " " + size + ".pdf"
+
+    book_data = request_book_data(url)
+    best_sellers = parse_book_data(book_data, url)
+
+    write_PDF(best_sellers, head, size, filename) 
 
     for filename in os.listdir('.'):
         if filename.endswith('.jpg'):
