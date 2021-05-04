@@ -86,9 +86,11 @@ def write_PDF(best_sellers, head, size, filename):
     pdf = PDF(format=size)
     pdf.add_page()
 
+    count = 1
+
     for book in best_sellers:
         pdf.set_font("Arial", 'B', size=20)
-        pdf.cell(100, 10, book["title"], 0, 1)
+        pdf.cell(100, 10, str(str(count) + ". " + book["title"]), 0, 1)
         pdf.set_font("Arial", size=15)
         pdf.cell(140, 10, "Author: " + book["author"], 0)
 
@@ -100,6 +102,7 @@ def write_PDF(best_sellers, head, size, filename):
         else:
             pdf.image(name=str(book["title"] + ".jpg"), x=150, w=25,h=30)
         pdf.ln()
+        count += 1
 
     pdf.output(filename, 'F')
 
