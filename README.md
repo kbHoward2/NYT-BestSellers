@@ -22,8 +22,8 @@ See the releases page for bundle Windows EXE for your machine.
 Simply select your options and click start a PDF document will be output in the directory of the binary executable.
 
 ## Future Plans 
-* Export checkbox for .csv and .txt files.
-* Option for Book Summary.
-* Option for Text Only.
-* Option for Image Only.
-* Headless execution through commandline. 
+- [x] Export checkbox for .csv and .txt files.
+- [x] Option for Book Summary.
+- [x] Option for Text Only.
+- [x] Option for Image Only.
+- [ ]Headless execution through commandline. 
