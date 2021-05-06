@@ -26,4 +26,4 @@ Simply select your options and click start a PDF document will be output in the 
 - [x] Option for Book Summary.
 - [x] Option for Text Only.
 - [x] Option for Image Only.
-- [ ]Headless execution through commandline. 
+- [ ] Headless execution through commandline. 
