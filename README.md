@@ -1,19 +1,36 @@
 # NYT-BestSellers
-A script to pull the New York Times BestSellers into a PDF file.
 
 ![Alt text](nytbs2.png?raw=true "PDF")
 
-## Installation
-### Linux
-Ensure that the following libraries are installed in your environment:
+## About
+A script to pull the New York Times BestSellers into a PDF file.
+
+## Features
+* Export to PDF or CSV for easy printing or spreadsheet view.
+* Configurable options including summaries, book cover, author.
+* Letter or Legal size.
+
+### Operating System Dependencies
+* python3.7+
+* python venv
+* pip3
+* git (optional)
+
+### Python Dependencies
 * Tkinter
-* BeautifulSoup4
 * FPDF
+* BeautifulSoup4
 * Requests
 
-Then run the program with the command:
-
- `python3 nytbs.py`
+## Setup Virtual Environment 
+### Ubuntu 
+1. Download the zip file or clone the repository with git.
+2. `git clone https://github.com/kbHoward2/NYT-BestSellers.git`
+3. `python3 -m venv /path/to/repository`
+4. `cd NYT-BestSellers`
+5. `apt install python3-tk` 
+6. pip install -r requirements.txt
+7. python3 main.py
 
 ### Windows
 See the releases page for bundle Windows EXE for your machine.
