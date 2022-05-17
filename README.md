@@ -29,8 +29,8 @@ A script to pull the New York Times BestSellers into a PDF file.
 3. `python3 -m venv /path/to/repository`
 4. `cd NYT-BestSellers`
 5. `apt install python3-tk` 
-6. pip install -r requirements.txt
-7. python3 main.py
+6. `pip install -r requirements.txt`
+7. `python3 main.py`
 
 ### Windows
 See the releases page for bundle Windows EXE for your machine.
